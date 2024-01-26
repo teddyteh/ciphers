@@ -1,10 +1,20 @@
-/**
- * The following lines intialize dotenv,
- * so that env vars from the .env file are present in process.env
- */
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { decryptAffineCipher, encryptAffineCipher } from './ciphers/affine';
+import {
+  decryptRailFenceCipher,
+  encryptRailFenceCipher,
+} from './ciphers/rail-fence';
 
-export const sum = (a: number, b: number): number => {
-  return a + b;
-};
+const text = 'HELLOOOO';
+const numRails = 3;
+
+// Encrypt
+const railFenceEncrypted = encryptRailFenceCipher(text, numRails);
+console.info(`Rail Fence Encrypted: ${railFenceEncrypted}`);
+const finalEncrypted = encryptAffineCipher(railFenceEncrypted);
+console.info(`Final Encrypted: ${finalEncrypted}`);
+
+// Decrypt
+const affineDecrypted = decryptAffineCipher(finalEncrypted);
+console.info(`Affine Decrypted: ${affineDecrypted}`);
+const finalDecrypted = decryptRailFenceCipher(affineDecrypted, numRails);
+console.info(`Final Decrypted: ${finalDecrypted}`);
