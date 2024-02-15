@@ -6,9 +6,11 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch src/**/*.ts --exec ts-node ./src/app.ts",
+    "dev:part1": "nodemon --watch src/part1 --exec ts-node src/part1/app.ts",
+    "dev:part2": "nodemon --watch src/part2 --exec ts-node src/part2/app.ts",
     "build": "tsc",
-    "start": "node ./dist/app.js",
+    "start:part1": "node ./dist/part1/app.js",
+    "start:part2": "node ./dist/part2/app.js",
     "lint": "eslint --fix --quiet src/**/*.ts",
     "format": "prettier --loglevel silent --write src/**/*.ts",
     "test": "jest",
@@ -16,11 +18,13 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "node-forge": "^1.3.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
-    "@types/node": "^20.11.6",
+    "@types/node": "^20.11.16",
+    "@types/node-forge": "^1.3.11",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.56.0",
