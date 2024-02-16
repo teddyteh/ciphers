@@ -1,9 +1,9 @@
+import { measurePerformance } from '../utils';
 import { decryptAffineCipher, encryptAffineCipher } from './ciphers/affine';
 import {
   decryptRailFenceCipher,
   encryptRailFenceCipher,
 } from './ciphers/rail-fence';
-import { measurePerformance } from './utils';
 
 const NUM_RAILS = 3;
 

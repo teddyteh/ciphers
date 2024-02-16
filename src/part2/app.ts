@@ -1,4 +1,5 @@
 import * as forge from 'node-forge';
+import { measurePerformance } from '../utils';
 import { decryptAES, encryptAES } from './aes';
 import {
   decryptWithPrivateKey,
@@ -10,7 +11,7 @@ const simulateCommunication = () => {
   // Person A generates RSA key pair
   const { publicKey, privateKey } = generateKeyPair();
 
-  // Person A generates a secret AES key (for simplicity, we're using a random string here; in a real scenario, this would be a securely generated key)
+  // Person A generates a secret AES key
   const secretAESKey = forge.random.getBytesSync(16); // AES key size is 16 bytes for AES-128
 
   // Person A sends the AES key to Person B securely using Person B's public key
@@ -23,18 +24,28 @@ const simulateCommunication = () => {
   console.log(`Encrypted AES Key: ${encryptedAESKey}`);
   console.log(`Decrypted AES Key: ${decryptedAESKey}`);
 
-  // Now both Person A and Person B have the same AES key, and they can securely communicate using AES encryption
-
   // Person A encrypts a message
   const originalMessage = 'Hello, Person B!';
+  const encryptionTime = measurePerformance(
+    encryptAES,
+    originalMessage,
+    decryptedAESKey,
+  );
   const encryptedMessage = encryptAES(originalMessage, decryptedAESKey);
 
   // Person B decrypts the message
+  const decryptionTime = measurePerformance(
+    decryptAES,
+    encryptedMessage,
+    decryptedAESKey,
+  );
   const decryptedMessage = decryptAES(encryptedMessage, decryptedAESKey);
 
   console.log(`Original Message: ${originalMessage}`);
   console.log(`Encrypted Message: ${encryptedMessage}`);
   console.log(`Decrypted Message: ${decryptedMessage}`);
+  console.log(`Encryption Time: ${encryptionTime} milliseconds`);
+  console.log(`Decryption Time: ${decryptionTime} milliseconds`);
 };
 
 simulateCommunication();
