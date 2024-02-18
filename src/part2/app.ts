@@ -1,5 +1,4 @@
 import * as forge from 'node-forge';
-import { measurePerformance } from '../utils';
 import { decryptAES, encryptAES } from './aes';
 import {
   decryptWithPrivateKey,
@@ -8,44 +7,43 @@ import {
 } from './key-exchange';
 
 const simulateCommunication = () => {
+  // RSA/Asymmetric Cipher: Secret Key Exchange Protocol
   // Person A generates RSA key pair
   const { publicKey, privateKey } = generateKeyPair();
 
-  // Person A generates a secret AES key
-  const secretAESKey = forge.random.getBytesSync(16); // AES key size is 16 bytes for AES-128
+  // Person A generates a secret AES key for symmetric encryption
+  const secretAESKey = forge.random.getBytesSync(16); // 16 bytes for AES-128
+  const iv = forge.random.getBytesSync(16); // 16 bytes for CBC mode IV
 
-  // Person A sends the AES key to Person B securely using Person B's public key
+  // Person A encrypts the AES key using Person B's public RSA key
   const encryptedAESKey = encryptWithPublicKey(publicKey, secretAESKey);
 
-  // Person B receives the AES key and decrypts it using their private key
+  // Person B receives the encrypted AES key and decrypts it using their private RSA key
   const decryptedAESKey = decryptWithPrivateKey(privateKey, encryptedAESKey);
 
-  console.log(`Original AES Key: ${secretAESKey}`);
-  console.log(`Encrypted AES Key: ${encryptedAESKey}`);
-  console.log(`Decrypted AES Key: ${decryptedAESKey}`);
-
-  // Person A encrypts a message
-  const originalMessage = 'Hello, Person B!';
-  const encryptionTime = measurePerformance(
-    encryptAES,
-    originalMessage,
-    decryptedAESKey,
-  );
-  const encryptedMessage = encryptAES(originalMessage, decryptedAESKey);
-
-  // Person B decrypts the message
-  const decryptionTime = measurePerformance(
-    decryptAES,
-    encryptedMessage,
-    decryptedAESKey,
-  );
-  const decryptedMessage = decryptAES(encryptedMessage, decryptedAESKey);
+  // AES/Triple DES: Modern Symmetric Cipher
+  // Encryption and decryption using AES in CBC mode
+  const originalMessage =
+    'Hello, Person B! This is a longer message that spans multiple blocks in AES encryption.';
+  const encryptedMessage = encryptAES(originalMessage, decryptedAESKey, iv);
+  const decryptedMessage = decryptAES(encryptedMessage, decryptedAESKey, iv);
 
   console.log(`Original Message: ${originalMessage}`);
   console.log(`Encrypted Message: ${encryptedMessage}`);
   console.log(`Decrypted Message: ${decryptedMessage}`);
-  console.log(`Encryption Time: ${encryptionTime} milliseconds`);
-  console.log(`Decryption Time: ${decryptionTime} milliseconds`);
+
+  // Demonstration of the effects of bit errors on the transmitted ciphertext
+  // Simulate a bit error in the transmitted ciphertext
+  const corruptedCiphertext =
+    encryptedMessage.substring(0, encryptedMessage.length - 1) + '0'; // Change the last bit
+  const decryptedCorruptedMessage = decryptAES(
+    corruptedCiphertext,
+    decryptedAESKey,
+    iv,
+  );
+
+  console.log(`Corrupted Ciphertext: ${corruptedCiphertext}`);
+  console.log(`Decrypted Corrupted Message: ${decryptedCorruptedMessage}`);
 };
 
 simulateCommunication();
