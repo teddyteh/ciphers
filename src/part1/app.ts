@@ -15,29 +15,47 @@ const TEXTS = [
 
 TEXTS.forEach((text) => {
   console.log(`Analyzing text: ${text}`);
-  console.log(
-    `Rail Fence Encryption Time: ${measurePerformance(encryptRailFenceCipher, text, NUM_RAILS)} ms`,
+
+  const { timeTaken: timeTakenEncryptRailFence, output: encryptedRailFence } =
+    measurePerformance(encryptRailFenceCipher, text, NUM_RAILS);
+  console.log(`Rail Fence Encryption Time: ${timeTakenEncryptRailFence} ms`);
+
+  const { timeTaken: timeTakenDecryptRailFence } = measurePerformance(
+    decryptRailFenceCipher,
+    encryptedRailFence,
+    NUM_RAILS,
   );
-  console.log(
-    `Rail Fence Decryption Time: ${measurePerformance(decryptRailFenceCipher, text, NUM_RAILS)} ms\n`,
+  console.log(`Rail Fence Decryption Time: ${timeTakenDecryptRailFence} ms\n`);
+
+  const { timeTaken: timeTakenEncryptAffine } = measurePerformance(
+    encryptAffineCipher,
+    text,
   );
-  console.log(
-    `Affine Encryption Time: ${measurePerformance(encryptAffineCipher, text)} ms`,
+  console.log(`Affine Encryption Time: ${timeTakenEncryptAffine} ms`);
+
+  const { timeTaken: timeTakenDecryptAffine } = measurePerformance(
+    decryptAffineCipher,
+    text,
   );
-  console.log(
-    `Affine Decryption Time: ${measurePerformance(decryptAffineCipher, text)} ms\n`,
-  );
+  console.log(`Affine Decryption Time: ${timeTakenDecryptAffine} ms\n`);
 
   // Measure combined cipher
+  const startTimeEncryptProductCipher = performance.now();
   const encryptedWithRailFence = encryptRailFenceCipher(text, NUM_RAILS);
   const encryptedWithAffine = encryptAffineCipher(encryptedWithRailFence);
-
+  const endTimeEncryptProductCipher = performance.now();
   console.log(
-    `Product Cipher Encryption Time: ${measurePerformance(encryptAffineCipher, encryptedWithRailFence)} ms`,
+    `Product Cipher Encrypt Total Time: ${endTimeEncryptProductCipher - startTimeEncryptProductCipher} ms`,
   );
 
+  const startTimeDecryptProductCipher = performance.now();
   const decryptedWithAffine = decryptAffineCipher(encryptedWithAffine);
+  const decryptedWithRailFence = decryptRailFenceCipher(
+    decryptedWithAffine,
+    NUM_RAILS,
+  );
+  const endTimeDecryptProductCipher = performance.now();
   console.log(
-    `Product Cipher Decryption Time: ${measurePerformance(decryptRailFenceCipher, decryptedWithAffine, NUM_RAILS)} ms\n\n\n`,
+    `Product Cipher Decrypt Total Time: ${endTimeDecryptProductCipher - startTimeDecryptProductCipher} ms\n\n\n`,
   );
 });

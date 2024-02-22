@@ -5,7 +5,10 @@ export const measurePerformance = (
   ...cipherFunctionParams: any[]
 ) => {
   const startTime = performance.now();
-  cipherFunction(...cipherFunctionParams);
+  const output = cipherFunction(...cipherFunctionParams);
   const endTime = performance.now();
-  return endTime - startTime; // time in milliseconds
+  return {
+    output,
+    timeTaken: endTime - startTime,
+  };
 };

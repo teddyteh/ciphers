@@ -30,7 +30,7 @@ const simulateCommunication = () => {
 
   console.log(`Original Message: ${originalMessage}`);
   console.log(`Encrypted Message: ${encryptedMessage}`);
-  console.log(`Decrypted Message: ${decryptedMessage}`);
+  console.log(`Decrypted Message: ${decryptedMessage}\n\n\n`);
 
   // Demonstration of the effects of bit errors on the transmitted ciphertext
   // Simulate a bit error in the transmitted ciphertext
